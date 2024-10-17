@@ -16,3 +16,4 @@ jobs:
               -H "Content-Type: application/octet-stream" \
               --data-binary @nomad_job.hcl \
               https://5i1dxk7ao6.execute-api.ap-south-1.amazonaws.com/test/nomadfile
+              
