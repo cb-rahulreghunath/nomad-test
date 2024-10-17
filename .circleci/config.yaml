@@ -1,0 +1,18 @@
+version: 2.1
+jobs:
+  deploy:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - checkout
+      - run:
+          name: Encode and Upload Nomad Job to Lambda
+          command: |
+            # Encode the file as base64 to send as binary
+            base64 nomad_job.hcl > job_base64.txt
+
+            # Send the file to Lambda via API Gateway
+            curl -X POST \
+              -H "Content-Type: application/octet-stream" \
+              --data-binary @nomad_job.hcl \
+              https://5i1dxk7ao6.execute-api.ap-south-1.amazonaws.com/test/nomadfile
