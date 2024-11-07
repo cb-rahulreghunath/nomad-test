@@ -7,15 +7,17 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Combine HCL files and Upload to Lambda
+          name: Combine HCL files with SPLIT and Upload to Lambda
           command: |
-            # Combine nomad_job.hcl and testing.vars into a single HCL file
-            cat nomad_job.hcl testing.vars > combined_nomad_job.hcl
+            # Combine nomad_job.hcl and testing.vars with a SPLIT delimiter
+            cat nomad_job.hcl > combined_file
+            echo '===SPLIT===' >> combined_file
+            cat testing.vars >> combined_file
 
-            # Send the combined HCL file to Lambda via API Gateway
+            # Send the combined file to Lambda via API Gateway
             curl -X POST \
               -H "Content-Type: application/octet-stream" \
-              --data-binary @combined_nomad_job.hcl \
+              --data-binary @combined_file \
               https://hds3pu35e7.execute-api.ap-south-1.amazonaws.com/dev/test-script
 
 workflows:
