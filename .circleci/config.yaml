@@ -7,18 +7,17 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Encode and Upload Nomad Job to Lambda
+          name: Combine HCL files and Upload to Lambda
           command: |
-            # Encode the file as base64 to send as binary
-            base64 nomad_job.hcl > job_base64.txt
+            # Combine nomad_job.hcl and testing.vars into a single HCL file
+            cat nomad_job.hcl testing.vars > combined_nomad_job.hcl
 
-            # Send the file to Lambda via API Gateway
+            # Send the combined HCL file to Lambda via API Gateway
             curl -X POST \
               -H "Content-Type: application/octet-stream" \
-              --data-binary @nomad_job.hcl \
-              https://5i1dxk7ao6.execute-api.ap-south-1.amazonaws.com/test/nomadfile
+              --data-binary @combined_nomad_job.hcl \
+              https://hds3pu35e7.execute-api.ap-south-1.amazonaws.com/dev/test-script
 
-# Define a workflow to run the deploy job
 workflows:
   version: 2
   deploy_workflow:
