@@ -11,7 +11,7 @@ jobs:
           command: |
             # Combine nomad_job.hcl and testing.vars with a SPLIT delimiter
             cat nomad_job.hcl > combined_file
-            echo '===SPLIT===' >> combined_file
+            echo -e '===SPLIT===\n' >> combined_file   # Ensure the delimiter has a newline after it
             cat testing.vars >> combined_file
 
             # Send the combined file to Lambda via API Gateway
