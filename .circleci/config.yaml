@@ -9,10 +9,11 @@ jobs:
       - run:
           name: Combine HCL files with SPLIT and Upload to Lambda
           command: |
-            # Combine files without adding extra newlines
             cat nomad_job.hcl > combined_file
-            echo -n '===SPLIT===' >> combined_file   # -n prevents the newline
+            echo -n '===SPLIT===' >> combined_file
             cat testing.vars >> combined_file
+
+            cat -A combined_file
 
             # Debug combined file content with exact visibility of newlines
             echo "Combined file content with visible newlines:"
