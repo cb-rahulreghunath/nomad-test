@@ -11,7 +11,7 @@ jobs:
           command: |
             # Combine files without adding extra newlines
             cat nomad_job.hcl > combined_file
-            echo '===SPLIT===' >> combined_file   # Use printf to avoid newlines
+            printf '===SPLIT===' >> combined_file   # Use printf to avoid adding a newline
             cat testing.vars >> combined_file
 
             # Debug combined file content with exact visibility of newlines
