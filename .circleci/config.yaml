@@ -1,32 +1,26 @@
-version: 2.1
+- run:
+    name: Combine HCL files with SPLIT and Upload to Lambda
+    command: |
+      # Ensure files use Unix line endings
+      tr -d '\r' < nomad_job.hcl > nomad_job_unix.hcl
+      tr -d '\r' < testing.vars > testing_unix.vars
 
-jobs:
-  deploy:
-    docker:
-      - image: cimg/base:stable
-    steps:
-      - checkout
-      - run:
-          name: Combine HCL files with SPLIT and Upload to Lambda
-          command: |
-            cat nomad_job.hcl > combined_file
-            echo -n '===SPLIT===' >> combined_file
-            cat testing.vars >> combined_file
+      # Combine files with exact delimiter without adding newlines
+      cat nomad_job_unix.hcl > combined_file
+      echo -n '===SPLIT===' >> combined_file
+      cat testing_unix.vars >> combined_file
 
-            cat -A combined_file
+      # Debug combined file content with exact visibility of newlines
+      echo "Combined file content with visible newlines:"
+      cat -e combined_file  # -e flag shows end of lines for debugging
 
-            # Debug combined file content with exact visibility of newlines
-            echo "Combined file content with visible newlines:"
-            cat -e combined_file  # -e flag shows end of lines for debugging
-
-            # Send the combined file to Lambda
-            curl -X POST \
-              -H "Content-Type: application/octet-stream" \
-              --data-binary @combined_file \
-              https://hds3pu35e7.execute-api.ap-south-1.amazonaws.com/dev/test-script
-
+      # Send the combined file to Lambda
+      curl -X POST \
+        -H "Content-Type: application/octet-stream" \
+        --data-binary @combined_file \
+        https://hds3pu35e7.execute-api.ap-south-1.amazonaws.com/dev/test-script
 workflows:
-  version: 2
-  deploy_workflow:
+    version: 2
+    deploy_workflow:
     jobs:
       - deploy
