@@ -11,12 +11,12 @@ jobs:
           command: |
             # Combine files without adding extra newlines
             cat nomad_job.hcl > combined_file
-            echo -n '===SPLIT===' >> combined_file
+            printf '===SPLIT===' >> combined_file   # Use printf to avoid newlines
             cat testing.vars >> combined_file
 
-            # Debug combined file content
-            echo "Combined file content:"
-            cat combined_file
+            # Debug combined file content with exact visibility of newlines
+            echo "Combined file content with visible newlines:"
+            cat -e combined_file  # -e flag shows end of lines for debugging
 
             # Send the combined file to Lambda
             curl -X POST \
