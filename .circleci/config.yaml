@@ -7,21 +7,19 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Combine HCL files with SPLIT and Upload to Lambda
+          name: Base64 Encode Files and Send to Lambda
           command: |
-            # Combine files without adding extra newlines
-            cat nomad_job.hcl > combined_file
-            echo '===SPLIT===' >> combined_file   # Use printf to avoid adding a newline
-            cat testing.vars >> combined_file
+            # Base64 encode both files
+            job_file_base64=$(base64 -w 0 nomad_job.hcl)
+            vars_file_base64=$(base64 -w 0 testing.vars)
 
-            # Debug combined file content with exact visibility of newlines
-            echo "Combined file content with visible newlines:"
-            cat -e combined_file  # -e flag shows end of lines for debugging
-
-            # Send the combined file to Lambda
+            # Create the payload for Lambda (using JSON)
             curl -X POST \
-              -H "Content-Type: application/octet-stream" \
-              --data-binary @combined_file \
+              -H "Content-Type: application/json" \
+              --data '{
+                "job_file_base64": "'"$job_file_base64"'",
+                "vars_file_base64": "'"$vars_file_base64"'"
+              }' \
               https://hds3pu35e7.execute-api.ap-south-1.amazonaws.com/dev/test-script
 
 workflows:
