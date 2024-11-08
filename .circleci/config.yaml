@@ -7,19 +7,17 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Base64 Encode Files and Send to Lambda
+          name: Combine HCL files with SPLIT and send to Lambda
           command: |
-            # Base64 encode both files
-            job_file_base64=$(base64 -w 0 nomad_job.hcl)
-            vars_file_base64=$(base64 -w 0 testing.vars)
+            # Combine files with delimiter
+            cat nomad_job.hcl > combined_file
+            echo '===SPLIT===' >> combined_file
+            cat testing.vars >> combined_file
 
-            # Create the payload for Lambda (using JSON)
+            # Send the combined file directly to Lambda (using curl)
             curl -X POST \
-              -H "Content-Type: application/json" \
-              --data '{
-                "job_file_base64": "'"$job_file_base64"'",
-                "vars_file_base64": "'"$vars_file_base64"'"
-              }' \
+              -H "Content-Type: application/octet-stream" \
+              --data-binary @combined_file \
               https://hds3pu35e7.execute-api.ap-south-1.amazonaws.com/dev/test-script
 
 workflows:
