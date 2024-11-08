@@ -9,10 +9,14 @@ jobs:
       - run:
           name: Combine HCL files with SPLIT and Upload to Lambda
           command: |
-            # Combine nomad_job.hcl and testing.vars with a SPLIT delimiter
+            # Combine nomad_job.hcl and testing.vars with an explicit SPLIT delimiter
             cat nomad_job.hcl > combined_file
-            echo -e '===SPLIT===\n' >> combined_file   # Ensure the delimiter has a newline after it
+            echo '===SPLIT===' >> combined_file  # Avoid -e option to simplify
             cat testing.vars >> combined_file
+
+            # Debug: Print combined file content for verification
+            echo "Combined File Content:"
+            cat combined_file
 
             # Send the combined file to Lambda via API Gateway
             curl -X POST \
