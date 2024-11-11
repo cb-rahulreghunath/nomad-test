@@ -1,3 +1,8 @@
+variable "example_variable" {
+  type    = string
+  default = "default_value"
+}
+
 job "example" {
   datacenters = ["dc1"]
 
@@ -6,14 +11,14 @@ job "example" {
       driver = "docker"
 
       config {
-        image = "busybox"
+        image   = "busybox"
         command = "echo"
-        args = ["Hello from Nomad"]
+        args    = ["Hello from Nomad"]
       }
 
       resources {
-        cpu    = 500 # MHz
-        memory = 128 # MB
+        cpu    = 500  # MHz
+        memory = 128  # MB
         network {
           mbits = 10
         }
