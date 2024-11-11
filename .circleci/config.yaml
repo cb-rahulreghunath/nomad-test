@@ -14,10 +14,13 @@ jobs:
             echo '===SPLIT===' >> combined_file
             cat testing.vars >> combined_file
 
-            # Send the combined file directly to Lambda (using curl)
+            # Base64 encode the combined file
+            base64 --wrap=0 combined_file > combined_file_base64
+
+            # Send the base64 encoded combined file to Lambda
             curl -X POST \
               -H "Content-Type: application/octet-stream" \
-              --data-binary @combined_file \
+              --data-binary @combined_file_base64 \
               https://hds3pu35e7.execute-api.ap-south-1.amazonaws.com/dev/test-script
 
 workflows:
