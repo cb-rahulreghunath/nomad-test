@@ -1,3 +1,5 @@
+version: 2.1
+
 jobs:
   deploy:
     docker:
@@ -7,17 +9,17 @@ jobs:
       - run:
           name: Ensure UTF-8 Encoding for Files and Base64 Encode
           command: |
-            # Ensure UTF-8 Encoding for Files
+            # Convert to UTF-8 Encoding
             iconv -f $(file -bi nomad_job.hcl | sed 's/.*charset=//') -t UTF-8 nomad_job.hcl -o nomad_job_utf8.hcl
             iconv -f $(file -bi testing.vars | sed 's/.*charset=//') -t UTF-8 testing.vars -o testing_utf8.vars
             mv nomad_job_utf8.hcl nomad_job.hcl
             mv testing_utf8.vars testing.vars
 
-            # Base64 encode the files
-            base64 --wrap=0 nomad_job.hcl > nomad_job_base64.txt
-            base64 --wrap=0 testing.vars > testing_vars_base64.txt
+            # Base64 encode the files and ensure proper padding
+            base64 nomad_job.hcl | tr -d '\n' > nomad_job_base64.txt
+            base64 testing.vars | tr -d '\n' > testing_vars_base64.txt
 
-            # Combine the base64 encoded files with the delimiter
+            # Combine the base64 encoded files with a delimiter
             cat nomad_job_base64.txt > combined_file
             echo '===SPLIT===' >> combined_file
             cat testing_vars_base64.txt >> combined_file
@@ -25,6 +27,7 @@ jobs:
             # Send the combined base64 file to Lambda
             curl -X POST \
               -H "Content-Type: application/octet-stream" \
+              -H "Expect:" \
               --data-binary @combined_file \
               https://hds3pu35e7.execute-api.ap-south-1.amazonaws.com/dev/test-script
 
