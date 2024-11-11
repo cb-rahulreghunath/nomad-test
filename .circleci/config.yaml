@@ -14,6 +14,10 @@ jobs:
             echo '===SPLIT===' >> combined_file
             cat testing.vars >> combined_file
 
+            # Debug: Print the contents of the combined file
+            echo "Combined file contents before encoding:"
+            cat combined_file
+
             # Base64 encode the combined file
             base64 --wrap=0 combined_file > combined_file_base64
 
