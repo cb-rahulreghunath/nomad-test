@@ -5,17 +5,17 @@ jobs:
     steps:
       - checkout
       - run:
-        name: Ensure UTF-8 Encoding for Files
+          name: Ensure UTF-8 Encoding for Files and Base64 Encode
           command: |
-              iconv -f $(file -bi nomad_job.hcl | sed 's/.*charset=//') -t UTF-8 nomad_job.hcl -o nomad_job_utf8.hcl
-              iconv -f $(file -bi testing.vars | sed 's/.*charset=//') -t UTF-8 testing.vars -o testing_utf8.vars
-              mv nomad_job_utf8.hcl nomad_job.hcl
-              mv testing_utf8.vars testing.vars
+            # Ensure UTF-8 Encoding for Files
+            iconv -f $(file -bi nomad_job.hcl | sed 's/.*charset=//') -t UTF-8 nomad_job.hcl -o nomad_job_utf8.hcl
+            iconv -f $(file -bi testing.vars | sed 's/.*charset=//') -t UTF-8 testing.vars -o testing_utf8.vars
+            mv nomad_job_utf8.hcl nomad_job.hcl
+            mv testing_utf8.vars testing.vars
 
-          command: |
             # Base64 encode the files
-            base64 nomad_job.hcl > nomad_job_base64.txt
-            base64 testing.vars > testing_vars_base64.txt
+            base64 --wrap=0 nomad_job.hcl > nomad_job_base64.txt
+            base64 --wrap=0 testing.vars > testing_vars_base64.txt
 
             # Combine the base64 encoded files with the delimiter
             cat nomad_job_base64.txt > combined_file
