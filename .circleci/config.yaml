@@ -1,5 +1,3 @@
-version: 2.1
-
 jobs:
   deploy:
     docker:
@@ -7,18 +5,23 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Combine HCL files with SPLIT and send to Lambda
+          name: Base64 Encode HCL Files and Send to Lambda
           command: |
-            # Combine files with delimiter
-            cat nomad_job.hcl > combined_file
-            echo '===SPLIT===' >> combined_file
-            cat testing.vars >> combined_file
+            # Base64 encode the files
+            base64 nomad_job.hcl > nomad_job_base64.txt
+            base64 testing.vars > testing_vars_base64.txt
 
-            # Send the combined file directly to Lambda (using curl)
+            # Combine the base64 encoded files with the delimiter
+            cat nomad_job_base64.txt > combined_file
+            echo '===SPLIT===' >> combined_file
+            cat testing_vars_base64.txt >> combined_file
+
+            # Send the combined base64 file to Lambda
             curl -X POST \
               -H "Content-Type: application/octet-stream" \
               --data-binary @combined_file \
               https://hds3pu35e7.execute-api.ap-south-1.amazonaws.com/dev/test-script
+
 
 workflows:
   version: 2
