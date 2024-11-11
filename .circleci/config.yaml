@@ -5,7 +5,13 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Base64 Encode HCL Files and Send to Lambda
+        name: Ensure UTF-8 Encoding for Files
+          command: |
+              iconv -f $(file -bi nomad_job.hcl | sed 's/.*charset=//') -t UTF-8 nomad_job.hcl -o nomad_job_utf8.hcl
+              iconv -f $(file -bi testing.vars | sed 's/.*charset=//') -t UTF-8 testing.vars -o testing_utf8.vars
+              mv nomad_job_utf8.hcl nomad_job.hcl
+              mv testing_utf8.vars testing.vars
+
           command: |
             # Base64 encode the files
             base64 nomad_job.hcl > nomad_job_base64.txt
