@@ -7,24 +7,14 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Ensure UTF-8 Encoding for Files and Base64 Encode
+          name: Combine HCL files with SPLIT and send to Lambda
           command: |
-            # Convert files to UTF-8 Encoding
-            iconv -f $(file -bi nomad_job.hcl | sed 's/.*charset=//') -t UTF-8 nomad_job.hcl -o nomad_job_utf8.hcl
-            iconv -f $(file -bi testing.vars | sed 's/.*charset=//') -t UTF-8 testing.vars -o testing_utf8.vars
-            mv nomad_job_utf8.hcl nomad_job.hcl
-            mv testing_utf8.vars testing.vars
-
-            # Base64 encode without line breaks
-            base64 nomad_job.hcl | tr -d '\n' | sed -E 's/(.{76})/\1\n/g' > nomad_job_base64.txt
-            base64 testing.vars | tr -d '\n' | sed -E 's/(.{76})/\1\n/g' > testing_vars_base64.txt
-
-            # Combine the base64 encoded files with a delimiter
-            cat nomad_job_base64.txt > combined_file
+            # Combine files with delimiter
+            cat nomad_job.hcl > combined_file
             echo '===SPLIT===' >> combined_file
-            cat testing_vars_base64.txt >> combined_file
+            cat testing.vars >> combined_file
 
-            # Send the combined base64 file to Lambda
+            # Send the combined file directly to Lambda (using curl)
             curl -X POST \
               -H "Content-Type: application/octet-stream" \
               --data-binary @combined_file \
