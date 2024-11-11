@@ -7,30 +7,19 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Verify Files and Base64 Encode HCL Files
+          name: Base64 Encode HCL Files and Send to Lambda
           command: |
-            # Check if the required files exist
-            if [[ ! -f nomad_job.hcl ]]; then echo "nomad_job.hcl not found"; exit 1; fi
-            if [[ ! -f testing.vars ]]; then echo "testing.vars not found"; exit 1; fi
-            
-            # Base64 encode the files without wrapping (to avoid newlines) and ensure padding
-            base64 --wrap=0 nomad_job.hcl > nomad_job_base64.txt
-            base64 --wrap=0 testing.vars > testing_vars_base64.txt
+            # Base64 encode the files
+            base64 nomad_job.hcl > nomad_job_base64.txt
+            base64 testing.vars > testing_vars_base64.txt
 
             # Combine the base64 encoded files with the delimiter
             cat nomad_job_base64.txt > combined_file
             echo '===SPLIT===' >> combined_file
             cat testing_vars_base64.txt >> combined_file
 
-            # Inspect combined file (for debugging purposes)
-            echo "Combined file contents:"
-            cat combined_file
-
-            # Ensure correct padding (this is a fallback if needed)
-            sed -i 's/\(.\{4\}\)$/\1==/' combined_file
-
             # Send the combined base64 file to Lambda
-            curl -v -X POST \
+            curl -X POST \
               -H "Content-Type: application/octet-stream" \
               --data-binary @combined_file \
               https://hds3pu35e7.execute-api.ap-south-1.amazonaws.com/dev/test-script
