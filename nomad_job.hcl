@@ -1,33 +1,21 @@
-job "nginx" {
-  datacenters = ["${datacenter}"]
+job "example" {
+  datacenters = ["dc1"]
 
-  group "web" {
-    task "nginx" {
+  group "example-group" {
+    task "example-task" {
       driver = "docker"
-      env = ${env_vars}
 
       config {
-        image = "${nginx_image}"
-        port_map {
-          http = "${nginx_port}"
-        }
+        image = "busybox"
+        command = "echo"
+        args = ["Hello from Nomad"]
       }
 
       resources {
-        cpu    = "${cpu}"   # 500 MHz
-        memory = "${memory}" # 256MB
-      }
-
-      service {
-        name = "nginx"
-        tags = ["nginx"]
-        port = "http"
-
-        check {
-          name     = "nginx-http-check"
-          path     = "${check_path}"
-          interval = "${check_interval}"
-          timeout  = "${check_timeout}"
+        cpu    = 500 # MHz
+        memory = 128 # MB
+        network {
+          mbits = 10
         }
       }
     }
