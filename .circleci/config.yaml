@@ -28,7 +28,7 @@ jobs:
             curl -X POST \
               -H "Content-Type: application/octet-stream" \
               --data-binary @combined_file \
-              https://hds3pu35e7.execute-api.ap-south-1.amazonaws.com/dev/test-script
+              https://ymogxkbxwa.execute-api.ap-south-1.amazonaws.com/dev/test-script
 
 workflows:
   version: 2
