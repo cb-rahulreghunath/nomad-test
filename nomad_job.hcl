@@ -12,8 +12,8 @@ job "example" {
 
       config {
         image   = "busybox"
-        command = "echo"
-        args    = ["Hello from Nomad"]
+        command = "sleep"
+        args    = ["3600"]  # Sleep for an hour to keep the task running
       }
 
       resources {
