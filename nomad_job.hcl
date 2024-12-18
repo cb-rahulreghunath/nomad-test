@@ -1,9 +1,4 @@
-variable "example_variable" {
-  type    = string
-  default = "default_value"
-}
-
-job "example" {
+Job "example" {
   datacenters = ["ap-southeast-1-staging"]
 
   group "example-group" {
@@ -11,7 +6,7 @@ job "example" {
       driver = "docker"
 
       config {
-        image   = "busybox"
+        image   = var.docker_image
         command = "sleep"
         args    = ["3600"]  # Sleep for an hour to keep the task running
       }
