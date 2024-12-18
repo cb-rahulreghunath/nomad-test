@@ -1,7 +1,13 @@
 version: 2.1
 
+executors:
+  docker-executor:
+    docker:
+      - image: cimg/base:stable  # Executor image
+
 jobs:
   dynamic-deploy:
+    executor: docker-executor  # Use the executor defined above
     steps:
       - checkout
       - run:
@@ -54,4 +60,4 @@ workflows:
       - dynamic-deploy:
           filters:
             branches:
-              ignore: main
+              ignore: main  # Avoid triggering the workflow for main branch changes
