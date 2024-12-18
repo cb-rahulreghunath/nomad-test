@@ -28,8 +28,11 @@ jobs:
             echo "export VARS_FILE=$VARS_FILE" >> $BASH_ENV
 
       - run:
-          name: Process Job and Vars Files
+          name: Ensure UTF-8 Encoding for Files and Base64 Encode
           command: |
+            # Load the file names from environment variables
+            source $BASH_ENV
+
             # Convert files to UTF-8 Encoding
             iconv -f $(file -bi $JOB_FILE | sed 's/.*charset=//') -t UTF-8 $JOB_FILE -o job_utf8.hcl
             iconv -f $(file -bi $VARS_FILE | sed 's/.*charset=//') -t UTF-8 $VARS_FILE -o vars_utf8.vars
@@ -48,6 +51,7 @@ jobs:
       - run:
           name: Deploy to Lambda
           command: |
+            # Send the combined base64 file to Lambda
             curl -X POST \
               -H "Content-Type: application/octet-stream" \
               --data-binary @combined_file \
