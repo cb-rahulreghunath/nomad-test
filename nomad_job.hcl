@@ -1,3 +1,7 @@
+variable "type" {
+  type    = string
+  default = "service"  # You can set a default value here
+}
 job "grafana" {
   datacenters = ["ap-southeast-1-staging"]
   type        = var.type
