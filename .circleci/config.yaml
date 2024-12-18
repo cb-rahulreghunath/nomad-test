@@ -22,10 +22,10 @@ jobs:
             echo '===SPLIT===' >> combined_file
             cat testing_vars_base64.txt >> combined_file
             # Send the combined base64 file to Lambda
-            curl -X POST \
-              -H "Content-Type: application/octet-stream" \
-              --data-binary @combined_file \
-              https://aj3ah32u35.execute-api.ap-southeast-1.amazonaws.com/staging/test-script
+            # curl -X POST \
+            #   -H "Content-Type: application/octet-stream" \
+            #   --data-binary @combined_file \
+            #   https://aj3ah32u35.execute-api.ap-southeast-1.amazonaws.com/staging/test-script
 
 
 workflows:
