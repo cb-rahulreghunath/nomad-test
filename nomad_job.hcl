@@ -1,4 +1,4 @@
-Job "example" {
+job "example" {
   datacenters = ["ap-southeast-1-staging"]
 
   group "example-group" {
@@ -12,7 +12,7 @@ Job "example" {
       }
 
       resources {
-        cpu    = 500  # MHz
+        cpu    = 250  # MHz
         memory = 128  # MB
         network {
           mbits = 10
@@ -21,3 +21,13 @@ Job "example" {
     }
   }
 }
+
+
+
+
+
+
+
+
+
+
