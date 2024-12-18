@@ -4,7 +4,7 @@ variable "example_variable" {
 }
 
 job "example" {
-  datacenters = ["dc1"]
+  datacenters = ["ap-southeast-1-staging"]
 
   group "example-group" {
     task "example-task" {
