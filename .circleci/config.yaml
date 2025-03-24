@@ -1,13 +1,13 @@
 version: 2.1
 
 executors:
-  machine-executor:
-    machine:
-      image: ubuntu-2204:2022.04.2
+  docker-executor:
+    docker:
+      - image: cimg/base:stable
 
 jobs:
   dynamic-deploy:
-    executor: machine-executor
+    executor: docker-executor
     steps:
       - checkout
       - run:
@@ -29,6 +29,7 @@ jobs:
           command: |
             source $BASH_ENV
 
+            # Convert to UTF-8 only if necessary
             if [[ $(file -bi "$JOB_FILE" | sed 's/.*charset=//') != "utf-8" ]]; then
               iconv -f $(file -bi "$JOB_FILE" | sed 's/.*charset=//') -t UTF-8 "$JOB_FILE" -o "job_utf8.hcl"
               mv "job_utf8.hcl" "$JOB_FILE"
@@ -39,22 +40,19 @@ jobs:
               mv "vars_utf8.vars" "$VARS_FILE"
             fi
 
+            # Base64 encode without line breaks
             base64 -w 0 "$JOB_FILE" > job_base64.txt
             base64 -w 0 "$VARS_FILE" > vars_base64.txt
 
+            # Combine with delimiter
             cat job_base64.txt > combined_file
             echo '===SPLIT===' >> combined_file
             cat vars_base64.txt >> combined_file
 
       - run:
-          name: Test DNS Resolution
-          command: |
-            ping -c 3 hds3pu35e7.execute-api.ap-southeast-1.amazonaws.com
-
-      - run:
           name: Deploy to Lambda
           command: |
-            set -e
+            set -e  # Exit on any error
             curl -X POST \
               -H "Content-Type: application/octet-stream" \
               --data-binary @combined_file \
