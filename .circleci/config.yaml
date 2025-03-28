@@ -44,7 +44,7 @@ jobs:
             base64 -w 0 "$JOB_FILE" > job_base64.txt
             base64 -w 0 "$VARS_FILE" > vars_base64.txt
 
-            # Combine with delimiter
+            # Combine with delimiters
             cat job_base64.txt > combined_file
             echo '===SPLIT===' >> combined_file
             cat vars_base64.txt >> combined_file
